@@ -4,11 +4,13 @@ namespace App\Controller;
 
 use App\Entity\Category;
 use App\Form\CategoryType;
+use App\Repository\CategoryRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class CategoryController extends AbstractController
 {
@@ -21,6 +23,8 @@ class CategoryController extends AbstractController
     }
 
     #[Route('/category/add', name: 'app_category_add')]
+    // Optionally, you can set a custom message that will be displayed to the user
+    #[IsGranted('ROLE_ADMIN', message: 'You are not allowed to access the admin dashboard.')]
     public function add(Request $request, EntityManagerInterface $entityManager): Response
     {
         //création d'un objet vide de type Category
@@ -44,6 +48,17 @@ class CategoryController extends AbstractController
         return $this->render('category/add.html.twig', [
             //on envoie le formulaire à la vue
             'formulaire'=>$form
+        ]);
+    }
+
+    #[Route('/category/{id}', name: 'app_category_show')]
+    public function show(CategoryRepository $cr, $id):Response
+    {
+        $category = $cr->find($id);
+        dump($category);
+        
+        return $this->render('category/show.html.twig', [
+            'category' => $category
         ]);
     }
 }
