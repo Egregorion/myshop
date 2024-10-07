@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Product;
 use App\Form\ProductType;
+use App\Repository\ProductRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -16,10 +17,13 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 class ProductController extends AbstractController
 {
     #[Route('/product', name: 'app_product')]
-    public function index(): Response
+    public function index(ProductRepository $pr): Response
     {
+
+        $products = $pr->findAll();
+
         return $this->render('product/index.html.twig', [
-            'controller_name' => 'ProductController',
+            'products' => $products,
         ]);
     }
 
